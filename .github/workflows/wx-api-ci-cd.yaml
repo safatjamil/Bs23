@@ -9,4 +9,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Build
         run: |
-          ls
+          ls -al
+          cd api
+          version="1.0.0"
+          docker build -t wxapi:1.0.0 .
+      - name: Publish
+        run: |
+          ls -al
+          docker login -u shafatjamil -p ${{ secrets.DOCKER_HUB_PAT }}
+          docker tag wxapi:1.0.0 shafatjamil/wxapi:1.0.0
+          docker push shafatjamil/wxapi:1.0.0
