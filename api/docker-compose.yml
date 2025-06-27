@@ -1,0 +1,6 @@
+services:
+  wxapi:
+    container_name: wxApi
+    image: shafatjamil/wxapi:1.0.0
+    ports:
+      - 80:5000
