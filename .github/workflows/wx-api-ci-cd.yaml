@@ -8,17 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ github.event.release.tag_name }}
+      DOCKER_USERNAME: shafatjamil
+      LOCAL_TAG_NAME: wxapi
+      REMOTE_REPO: shafatjamil/wxapi
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build
         run: |
           cd api
-          echo "$VERSION"
-          echo ${{ env.VERSION }}
-          docker build -t wxapi:${{ env.VERSION }} .
+          docker build -t ${{ env.LOCAL_TAG_NAME }}:${{ env.VERSION }} .
       - name: Publish
         run: |
-          docker login -u shafatjamil -p ${{ secrets.DOCKER_HUB_PAT }}
-          docker tag wxapi:${{ env.VERSION }} shafatjamil/wxapi:${{ env.VERSION }}
-          docker push shafatjamil/wxapi:${{ env.VERSION }}
+          docker login -u ${{ env.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_HUB_PAT }}
+          docker tag ${{ env.LOCAL_TAG_NAME }}:${{ env.VERSION }} ${{ env.REMOTE_REPO }}:${{ env.VERSION }}
+          docker push ${{ env.REMOTE_REPO }}:${{ env.VERSION }}
