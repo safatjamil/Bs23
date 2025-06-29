@@ -42,7 +42,8 @@ def health_api():
     # Fetch data from the fetch_api function
     if dhk_wx['status'] == 'ok':
         res['thirdPartyApiReach'] = True
-    return jsonify(res), 200
+        return jsonify(res), 200
+    return jsonify(res), 503
     
 
 # Fetch weather data from a third party API

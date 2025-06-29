@@ -1,0 +1,21 @@
+vpc:
+  name: eks-dev
+  cidr_block: "172.16.0.0/16"
+  az1:
+    name: us-east-1a
+    public_subnet:
+      sub1: 
+        cidr: "172.16.10.0/24"
+        name: "USEAST1A_PUBLIC"
+    private_subnet:
+      sub1: 
+        cidr: "172.16.11.0/24"
+        name: "USEAST1A_PRIVATE"
+  nat_name: eks cluster nat
+  igw_name: eks-dev-igw
+cluster:
+  name: eks dev
+  role: eks_cluster_role
+  version: "1.31"
+  authentication_mode: API
+

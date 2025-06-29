@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluent-bit-config
+  namespace: <namespace>
+data:
+  fluent-bit.conf: |
+    @INCLUDE input-kubernetes.conf
+    @INCLUDE filter-kubernetes.conf
+    @INCLUDE output-elasticsearch.conf
+
+    [SERVICE]
+        Flush         1
+        Log_Level     info
+        Daemon        off
+        Parsers_File  parsers.conf
+        HTTP_Server   On
+        HTTP_Listen   0.0.0.0
+        HTTP_Port     2020
+
+  input-kubernetes.conf: |
+    [INPUT]
+        Name              tail
+        Tag               kube.*
+        Path              /var/log/containers/*.log
+        Exclude_Path      /var/log/containers/*_kube-sytem_*.log,/var/log/containers/*_prometheus_*.log,/var/log/containers/*_istio-system_*.log,/var/log/containers/*_logging_*.log,/var/log/containers/*_prometheus_*.log
+        Parser            kubernetes_strip
+        DB                /var/log/flb_kube.db
+        Mem_Buf_Limit     50MB
+        Skip_Long_Lines   On
+        Refresh_Interval  10
+
+  filter-kubernetes.conf: |
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Kube_URL            https://kubernetes.default.svc.cluster.local:443
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Kube_Tag_Prefix     kube.var.log.containers.
+        Merge_Log           On
+        Merge_Log_Key       log_processed
+        K8S-Logging.Parser  On
+
+  output-elasticsearch.conf: |
+    [OUTPUT]
+        Name            es
+        Match           *bs-dev-*
+        Host            <es_host>
+        Port            9200
+        HTTP_User       <es_user>
+        HTTP_Passwd     <es_password>
+        Type            flb_type
+        TLS             On
+        TLS.Verify      Off
+        Logstash_Format On
+        Retry_Limit     6
+        Time_Key        @timestamp
+        Replace_Dots    On
+        Logstash_Prefix bs-dev
+        Logstash_Prefix_Key bs-dev
+        Logstash_Prefix_Separator -
+        Logstash_DateFormat %Y.%m.%d
+        Suppress_Type_Name On
+    [PARSER]
+        Name   kubernetes_strip
+        Format regex
+        Regex  <regex_pattern>
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z

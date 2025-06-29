@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+ labels:
+   app: wx-api
+ name: wx-api
+ namespace: default
+spec:
+  selector:
+    app: wx-api
+  ports:
+    - port: 80
+      targetPort: 5000

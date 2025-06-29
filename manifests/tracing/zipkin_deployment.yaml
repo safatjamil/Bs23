@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zipkin
+  labels:
+    app: zipkin
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zipkin
+  template:
+    metadata:
+      labels:
+        app: zipkin
+    spec:
+      restartPolicy: Always
+      containers:
+        - image: openzipkin/zipkin:latest
+          imagePullPolicy: Always
+          name: zipkin
+          env:
+            - name: STORAGE_TYPE
+              value: elasticsearch
+            - name: ES_HOSTS
+              value: "<elasticsearch_host>:9200"
+            - name: ES_HTTP_LOGGING
+              value: "BODY"
+          resources:             
+            requests:
+              memory: "<request_memory>"  
+          ports:
+            - containerPort: 9411

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wx-api
+  labels:
+    app: wx-api
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wx-api
+  template:
+    metadata:
+      labels:
+        app: wx-api
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: wx-api
+        image: shafatjamil/wxapi:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 5000
+        env:
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: wx-third-party-api-key
+                key: api-key

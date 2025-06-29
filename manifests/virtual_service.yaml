@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: wx-api-route
+  namespace: default
+spec:
+  hosts:
+    - "wx-api.brainstation-23.com"
+  gateways:
+    - wx-api-gateway
+  http:
+  - name: wx-api-route
+    match:
+    - uri:
+        prefix: "/api"
+    route:
+    - destination:
+        host: wx-api
+        port:
+          number: 80

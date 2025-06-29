@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: grafana-route
+  namespace: default
+spec:
+  hosts:
+    - "grafana.brainstation-23.com"
+  gateways:
+    - wx-api-gateway
+  http:
+  - name: grafana-route
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: grafana
+        port:
+          number: 80

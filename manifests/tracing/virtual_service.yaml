@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: zipkin-route
+  namespace: default
+spec:
+  hosts:
+    - "zipkin.brainstation-23.com"
+  gateways:
+    - wx-api-gateway
+  http:
+  - name: zipkin-route
+    match:
+    - uri:
+        prefix: "/zipkin"
+    route:
+    - destination:
+        host: zipkin
+        port:
+          number: 9411
